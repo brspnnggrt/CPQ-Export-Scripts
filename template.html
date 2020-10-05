@@ -1,0 +1,134 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>__title__</title>
+
+<head>
+
+    <style>
+        .slidecontainer {
+            width: 100%;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        #chartdiv {
+            width: 100%;
+            height: 550px;
+        }
+
+        .global-scripts {
+            background-color: #d4edda !important;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const data = __data__;
+        const events = __events__;
+        const products = __products__;
+    </script>
+
+
+
+    <!-- Resources -->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/plugins/forceDirected.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+    <script>__bundle__</script>
+</head>
+
+<!-- HTML -->
+
+<body>
+    <div id="filtermenu" class="input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text"><input type="checkbox" name="scripttype" value="customaction" checked></div>
+        </div>
+        <label type="text" class="form-control">Custom Action</label>
+        <div class="input-group-prepend">
+            <div class="input-group-text"><input type="checkbox" name="scripttype" value="customcalculation" checked></div>
+        </div>
+        <label type="text" class="form-control">Quote Calculation</label>
+        <div class="input-group-prepend">
+            <div class="input-group-text"><input type="checkbox" name="scripttype" value="globalscript" checked></div>
+        </div>
+        <label type="text" class="form-control">Global Script</label>
+        <div class="input-group-prepend">
+            <div class="input-group-text"><input type="checkbox" name="scripttype" value="productscript"></div>
+        </div>
+        <label type="text" class="form-control">Product Script</label>
+        <div class="input-group-prepend">
+            <div class="input-group-text"><input type="checkbox" name="scripttype" value="customresponsivetemplate"></div>
+        </div>
+        <label type="text" class="form-control">Custom Responsive Template</label>
+        <!-- <div class="input-group-prepend">
+            <div class="input-group-text"><input type="checkbox" name="scripttype" value="/inactive/"></div>
+        </div>
+        <label type="text" class="form-control global-scripts">Inactive</label>
+        <div class="input-group-prepend">
+            <div class="input-group-text"><input type="checkbox" name="scripttype" value="/module/" checked></div>
+        </div>
+        <label type="text" class="form-control global-scripts">Module</label> -->
+    </div>
+    <div class="slidecontainer">
+        <input type="range" min="1" max="100" value="5" class="slider" id="myRange">
+    </div>
+    <div class="slidecontainer">
+        <input type="range" min="1" max="100" value="100" class="slider" id="myRange2">
+    </div>
+    <div id="chartdiv"></div>
+    <div class="input-group" style="display:inline-block;">
+        <span id="clusterCount"></span>
+        <span> clusters - </span>
+        <span id="nodeCount"></span>
+        <span> nodes</span>
+    </div>
+</body>
+
+</html>

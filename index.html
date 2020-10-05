@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: #eeeeee;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    tenant (ex: eusb)<br />
+    <input type='text' id="tenant"><br />
+    username (admin)<br />
+    <input type='text' id="username"><br />
+    password<br/>
+    <input type='password' id="password"><br/>
+    domain (ex: SANDBOX)<br/>
+    <input type='text' id="domain"><br/>
+    <button id="fetchScripts">Get scripts & visualize</button><br />
+    <script src="./fetchScripts.js"></script>
+    <script src="./jszip.min.js"></script>
+</body>
+
+</html>

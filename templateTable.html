@@ -1,0 +1,200 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>__title__ Table</title>
+
+<head>
+
+    <style>
+        :root {
+            --rowNum: 0;
+            --colNum: 2;
+            --gridHeight: 65px;
+            --areas: "";
+        }
+
+        #wrapper {
+            display: grid;
+            grid-template-rows: repeat(var(--rowNum), var(--gridHeight));
+            grid-template-columns: repeat(var(--colNum), auto);
+            grid-template-areas: var(--areas);
+        }
+
+        .event > .card {
+            background-color: var(--teal);
+        }
+
+        .script > .card {
+            background-color: var(--pink);
+        }
+
+        #wrapper > div {
+            margin: 10px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            border-radius: 5px;
+            padding: 10px;
+            height: 100%;
+            width: 100%;
+        }
+
+        #table {
+            display:none;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.1/xlsx.mini.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
+
+    <script>
+        const events = __events__;
+        const data = __data__;
+    </script>
+</head>
+
+<body>
+    <button id="button-a">Create Excel</button>
+    <div id="wrapper">
+    </div>
+    <div id="table">
+    </div>
+    <script>
+
+        const eventOrder = [
+            { "order": 1, "id": 29, "text": "OnUserLogin" },
+            { "order": 2, "id": 30, "text": "OnLandingFromCrm" },
+            { "order": 3, "id": 17, "text": "OnQuoteCreated" },
+            { "order": 4, "id": 38, "text": "Before Add to quote" },
+            { "order": 5, "id": 2, "text": "OnItemAdded" },
+            { "order": 6, "id": 3, "text": "OnItemUpdated" },
+            { "order": 7, "id": 19, "text": "OnItemDeleted" },
+            { "order": 8, "id": 41, "text": "OnItemCopied" },
+            { "order": 9, "id": 16, "text": "OnEveryTimeQuoteChanged" },
+            { "order": 10, "id": 18, "text": "OnQuoteEdited" },
+            { "order": 11, "id": 20, "text": "OnUserOnQuotationTab" },
+            { "order": 12, "id": 50, "text": "OnQuoteTabChanged" },
+            { "order": 13, "id": 49, "text": "OnDocumentSentToCustomer" },
+            { "order": 14, "id": 1, "text": "On custom field changed" },
+            { "order": 15, "id": 8, "text": "On line item xml serialization start" },
+            { "order": 16, "id": 9, "text": "On line item xml serialization end" },
+            { "order": 17, "id": 21, "text": "OnCustomerMappings" },
+            { "order": 18, "id": 22, "text": "OnQuoteFieldsMappings" },
+            { "order": 19, "id": 37, "text": "OnCrmItemMapping" },
+            { "order": 20, "id": 39, "text": "OnBeforeCustomFieldCalculation" },
+            { "order": 21, "id": 40, "text": "OnAfterCustomFieldCalculation" },
+            { "order": 22, "id": 42, "text": "OnAssetCreated" },            
+            { "order": 23, "id": 54, "text": "AfterQuoteTableExcelUploaded" },
+            { "order": 24, "id": 55, "text": "When product is ready" },
+            { "order": 25, "id": 23, "text": "When product is loaded" },
+            { "order": 26, "id": 24, "text": "When product rule execution starts" },
+            { "order": 27, "id": 25, "text": "When product rule execution ends" },
+            { "order": 28, "id": 26, "text": "When product tab is changed" },
+            { "order": 29, "id": 27, "text": "When product configuration is completed" },
+            { "order": 30, "id": 28, "text": "When product is added to quote" }
+        ];
+
+        const uniqData = _.uniqBy(data, "file");
+        const uniqDataWithoutProductScripts = uniqData.filter(ud => ud.type != "productscript");
+        const uniqDataWithoutEvents = uniqData.filter(ud => ud.type != "event");
+
+        const orderedEvents = events.sort((e1, e2) => eventOrder.filter(eo => eo.id == e2.id)[0].order < eventOrder.filter(eo => eo.id == e1.id)[0].order ? 1 : -1);
+
+        const eventMap = {};
+        for (let e of orderedEvents) {
+            eventMap[e.text] = uniqDataWithoutEvents.filter(d => d.imports.includes(e.text.replace(/ /g, `_`)));
+        }
+
+        // Create areas variable for css grid
+        const areas = [];
+        for (let e in eventMap) {
+            if (eventMap[e].length < 1) continue;
+            let eventString = ``;
+            for (let s of eventMap[e]) {
+                eventString += `"${e.replace(/ /g, `_`)} ${e.replace(/ /g, `_`) + "_" + s.file.replace(/ /g, `_`)}"`;
+            }
+            areas.push(eventString);
+        }
+        // Example: 
+        // '"OnUserLogin value""OnUserLogin value""OnLandingFromCrm value""OnQuoteCreated value""OnItemAdded value""event value"';
+        
+        // Create div content
+        let wrapperContent = ``;
+        for (let e in eventMap) {
+            if (eventMap[e].length < 1) continue;
+            wrapperContent += 
+                    `<div class="event" style="grid-area:${e.replace(/ /g, `_`)};">
+                        <div class="card">${e}</div>
+                    </div>`;
+            for (let s of eventMap[e]) {
+                wrapperContent += 
+                    `<div class="event" style="grid-area:${e.replace(/ /g, `_`) + "_" + s.file.replace(/ /g, `_`)};">
+                        <div class="card">${s.file}</div>
+                    </div>`;
+            }
+        }    
+        
+        const rowNum = Object.keys(eventMap).length + Object.values(eventMap).length;
+        
+        document.getElementById("wrapper").innerHTML = wrapperContent;
+        document.documentElement.style.setProperty(`--areas`, areas.join(``));
+        document.documentElement.style.setProperty(`--rowNum`, rowNum);
+
+        let rowContent = "";
+
+        for (let e in eventMap) {
+            if (eventMap[e].length < 1) continue;
+            for (let s of eventMap[e]) {
+                const script = s.file;
+                const event = e.replace(/ /g, `_`);
+                rowContent += 
+                    `
+                    <tr>
+                        <td>${event}</td>
+                        <td>${script}</td>
+                    </tr>
+                    `
+            }
+        }    
+
+        const tableContent = 
+            `<table>
+                <tr>
+                    <th>Event</th>
+                    <th>Script</th>
+                </tr>
+                ${rowContent}
+            </table>`
+
+        document.getElementById("table").innerHTML = tableContent;
+
+        const wb = XLSX.utils.table_to_book(document.getElementById('table'), {sheet:"Sheet JS"});
+        const wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+        document.getElementById("button-a").onclick = () => {
+            saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), `${document.title}.xlsx`);
+        };
+
+    </script>
+</body>
+
+</html>
